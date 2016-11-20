@@ -1,4 +1,4 @@
-# Automation of Docker 1.12 Swarm-Mode workshop 
+# Automation of Docker 1.12 Swarm-Mode workshop :whale:
 
 ## Description
 
@@ -26,9 +26,9 @@ Edit the `env_cluster.sh` file to configure the cluster :
 ./create-cluster.sh
 ```
 
-The wordpress app will be accessible at : http://<ANY_SWARM_NODE_IP>:${WORDPRESS_SERVICE_PUBLISHED_PORT}
+The wordpress app will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${WORDPRESS_SERVICE_PUBLISHED_PORT}
 
-The swarm vizualiser will be accessible at : http://<ANY_SWARM_NODE_IP>:${VISUALIZER_PORT} and will display a dynamic view of the swarm :
+The swarm vizualiser will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${VISUALIZER_PORT} and will display a dynamic view of the swarm :
 
 ![swarm-viz](resources/docker-swarm-mode-viz.png)
 
