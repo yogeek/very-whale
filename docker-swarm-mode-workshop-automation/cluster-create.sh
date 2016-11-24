@@ -143,7 +143,7 @@ docker service create --name=viz \
 
 # Waiting for viz service to be running
 while [[ ! $(docker service ls -f name=viz | grep -v REPLICAS | grep "1/1") ]]; do 
-	echo "waiting for ${WORDPRESS_SERVICE_NAME} service to be ready..."
+	echo "waiting for VIZ service to be ready..."
 	sleep 10
 done
 echo "VIZ is ready !"
