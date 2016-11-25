@@ -14,15 +14,26 @@ export WORKERS_LIST=( w1 )
 # VirtualBox machines
 export MANAGER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
 export WORKER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
-# For GCE machines, comment the 2 lines above and uncomment the 2 following lines
-#export MANAGER_DRIVER_OPTS="-d google --google-project=oceirt-1191 --google-zone=europe-west1-c --google-machine-type=n1-standard-2"
-#export WORKER_DRIVER_OPTS="-d google --google-project=oceirt-1191 --google-zone=europe-west1-c --google-machine-type=n1-standard-2"
+
+# For GCE machines, comment the 2 lines above and uncomment the following lines
+# The use of "GOOGLE_USE_INTERNAL_IP" will make docker-machine use internal rather than public NATed IPs. 
+# The flag is persistent in the sense that a machine created with it retains the IP. 
+# It's useful for managing docker machines from another machine on the same network e.g. while deploying swarm.
+
+# export MANAGER_DRIVER_OPTS="-d google"
+# export WORKER_DRIVER_OPTS="-d google"
+# export GOOGLE_PROJECT="oceirt-1191"
+# export GOOGLE_ZONE="europe-west1-c"
+# export GOOGLE_MACHINE_TYPE="n1-standard-2"
+# export GOOGLE_TAGS="http-server,https-server"
+# export GOOGLE_USE_INTERNAL_IP="true"
+
 
 # worpress config
 export WORDPRESS_NETWORK_NAME="wordpressnet"
 export WORDPRESS_SERVICE_NAME="wordpress"
 export WORDPRESS_DOCKER_IMAGE="wordpress:latest"
-export WORDPRESS_SERVICE_PUBLISHED_PORT=80
+export WORDPRESS_SERVICE_PUBLISHED_PORT="80"
 
 export WORDPRESS_SERVICE_REPLICAS=3
 
