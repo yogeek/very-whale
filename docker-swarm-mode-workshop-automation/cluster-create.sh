@@ -20,13 +20,13 @@ source env_cluster.sh
 # Create Managers machines
 loghighlight "Creating managers..."
 for manager in ${MANAGERS_LIST[*]}; do
-    dm create -d virtualbox --virtualbox-memory=512 $manager
+    dm create $MANAGER_DRIVER_OPTS  $manager
 done
 
 # Create Workers machines
 loghighlight "Creating workers..."
 for worker in ${WORKERS_LIST[*]}; do
-    dm create -d virtualbox --virtualbox-memory=512 $worker
+    dm create $WORKER_DRIVER_OPTS $worker
 done
 
 # Check machines

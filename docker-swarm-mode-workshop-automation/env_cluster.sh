@@ -8,6 +8,16 @@ export MANAGERS_LIST=( m1 m2 m3 )
 export FIRST_MANAGER=${MANAGERS_LIST[0]}
 export WORKERS_LIST=( w1 )
 
+# Specific virtualization provider config
+# (see cloud providers documentation for details)
+
+# VirtualBox machines
+export MANAGER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
+export WORKER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
+# For GCE machines, comment the 2 lines above and uncomment the 2 following lines
+#export MANAGER_DRIVER_OPTS="-d google --google-project=oceirt-1191 --google-zone=europe-west1-c --google-machine-type=n1-standard-2"
+#export WORKER_DRIVER_OPTS="-d google --google-project=oceirt-1191 --google-zone=europe-west1-c --google-machine-type=n1-standard-2"
+
 # worpress config
 export WORDPRESS_NETWORK_NAME="wordpressnet"
 export WORDPRESS_SERVICE_NAME="wordpress"
