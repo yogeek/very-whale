@@ -22,7 +22,7 @@ export WORKER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
 
 # export MANAGER_DRIVER_OPTS="-d google"
 # export WORKER_DRIVER_OPTS="-d google"
-# export GOOGLE_PROJECT="oceirt-1191"
+# export GOOGLE_PROJECT=${PROJECT_ID}
 # export GOOGLE_ZONE="europe-west1-c"
 # export GOOGLE_MACHINE_TYPE="n1-standard-2"
 # export GOOGLE_TAGS="http-server,https-server"
