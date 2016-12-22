@@ -18,7 +18,7 @@ Before you start, make sure you have :
 
 ### Configure a cluster
 
-Edit the `env_cluster.sh` file to configure the cluster :
+Edit the `env_cluster.sh` file to configure the cluster.
      
 ### Create a cluster
 
