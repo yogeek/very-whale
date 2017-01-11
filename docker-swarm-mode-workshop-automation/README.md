@@ -23,7 +23,7 @@ Edit the `env_cluster.sh` file to configure the cluster.
 ### Create a cluster
 
 ```
-./create-cluster.sh
+./cluster-create.sh
 ```
 
 The wordpress app will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${WORDPRESS_SERVICE_PUBLISHED_PORT}
