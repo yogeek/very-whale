@@ -95,13 +95,13 @@ export SPARK_NETWORK_NAME="sparknet"
 
 # master config
 export SPARK_MASTER_SERVICE_NAME="spark-master"
-export SPARK_MASTER_DOCKER_IMAGE="gcr.io/oceirt-1191/citadel/python-base-spark"
+export SPARK_MASTER_DOCKER_IMAGE="gcr.io/"$PROJECT_ID"/citadel/python-base-spark"
 export SPARK_MASTER_SERVICE_PUBLISHED_PORT="8080"
 export SPARK_MASTER_SERVICE_REPLICAS=1
 
 # worker config
 export SPARK_WORKER_SERVICE_NAME="spark-worker"
-export SPARK_WORKER_DOCKER_IMAGE="gcr.io/oceirt-1191/citadel/python-base-spark"
+export SPARK_WORKER_DOCKER_IMAGE="gcr.io/"$PROJECT_ID"/citadel/python-base-spark"
 export SPARK_WORKER_SERVICE_REPLICAS=3
 
 # Visualizer
