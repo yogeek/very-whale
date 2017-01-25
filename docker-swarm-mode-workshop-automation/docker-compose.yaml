@@ -1,0 +1,56 @@
+# Docker Compose V3
+
+version: '3'
+
+services:
+
+  wordpressdb:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+    networks:
+      - wordpressnet
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels: [side=backend]
+
+  wordpress:
+    depends_on:
+      - wordpressdb
+    #     condition: service_healthy
+    image: wordpress:latest
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks:
+     - wordpressnet
+    deploy:
+      mode: replicated
+      replicas: 6
+      #update_config:
+      #parallelism: 2
+      #  delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels: [side=frontend]
+
+  viz:
+    depends_on:
+      - wordpress
+    image: manomarks/visualizer
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels: [kind=viz]
+
+networks:
+  wordpressnet:
+    driver: overlay

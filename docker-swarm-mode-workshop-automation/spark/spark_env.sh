@@ -2,10 +2,9 @@
 
 set -u
 
-
 if [[ $# -ne 1 ]]
 then
-    echo "Usage : env_cluster.sh <cloud_driver>"
+    echo "Usage : spark-env.sh <cloud_driver>"
     echo "with :"
     echo "  <cloud_driver>  = Docker Machine Driver to create instances"
     echo "                    Choices : virtualbox, google"
@@ -43,10 +42,10 @@ case "$1" in
     # If not specified, the package version is taken
     #export ENGINE_URL=""
     # Test version (to use v1.13-rc2 needed for swarm mode service discovery through specific overlay network)
-    #export ENGINE_URL="--engine-install-url https://test.docker.com/"
+    export ENGINE_URL="--engine-install-url https://test.docker.com/"
     
     # Options for "docker-machine create" command for manager nodes
-    export MANAGER_DRIVER_OPTS="-d google ${ENGINE_URL:-}"
+    export MANAGER_DRIVER_OPTS="-d google $ENGINE_URL"
     # Options for "docker-machine create" command for worker nodes
     export WORKER_DRIVER_OPTS="$MANAGER_DRIVER_OPTS"
 
@@ -63,7 +62,7 @@ case "$1" in
     export GOOGLE_MACHINE_TYPE="n1-standard-2"
     
     # --tags https-server,http-server
-    export GOOGLE_TAGS="http-server,https-server,spark-on-swarm"
+    export GOOGLE_TAGS="http-server,https-server"
 
     # The use of "GOOGLE_USE_INTERNAL_IP" will make docker-machine use internal rather than public NATed IPs. 
     # The flag is persistent in the sense that a machine created with it retains the IP. 
@@ -72,11 +71,8 @@ case "$1" in
     export GOOGLE_USE_INTERNAL_IP="true"
     
     #--google-scopes storage-rw,cloud-platform,service-control,service-management"
-    #SCOPE_PREFIX_URL="https://www.googleapis.com/auth/"
-    #export GOOGLE_SCOPES="${SCOPE_PREFIX_URL}devstorage.read_write,\
-    #                      ${SCOPE_PREFIX_URL}cloud-platform,\
-    #                      ${SCOPE_PREFIX_URL}servicecontrol,\
-    #                      ${SCOPE_PREFIX_URL}service.management"
+    SCOPE_PREFIX_URL="https://www.googleapis.com/auth/"
+    export GOOGLE_SCOPES="${SCOPE_PREFIX_URL}devstorage.read_write,${SCOPE_PREFIX_URL}cloud-platform,${SCOPE_PREFIX_URL}servicecontrol,${SCOPE_PREFIX_URL}service.management"
     ;;
   *)
     echo "Error ! Invalid argument."
@@ -86,27 +82,26 @@ case "$1" in
 esac
 
 # Network config
-export WORDPRESS_NETWORK_NAME="sparknet"
+export SPARK_NETWORK_NAME="sparknet"
 
-# worpress config
-export WORDPRESS_SERVICE_NAME="wordpress"
-export WORDPRESS_DOCKER_IMAGE="wordpress:latest"
-export WORDPRESS_SERVICE_PUBLISHED_PORT="80"
+# master config
+export SPARK_MASTER_SERVICE_NAME="spark-master"
+export SPARK_MASTER_DOCKER_IMAGE="gcr.io/oceirt-1191/citadel/python-base-spark"
+export SPARK_MASTER_SERVICE_PUBLISHED_PORT="8080"
+export SPARK_MASTER_SERVICE_REPLICAS=1
 
-export WORDPRESS_SERVICE_REPLICAS=3
-
-# mysql config
-export MYSQL_SERVICE_NAME="wordpressdb"
-export MYSQL_DOCKER_IMAGE="mysql:latest"
-export MYSQL_DATABASE="wordpress"
-export MYSQL_ROOT_PASSWORD="password"
+# worker config
+export SPARK_WORKER_SERVICE_NAME="spark-worker"
+export SPARK_WORKER_DOCKER_IMAGE="gcr.io/oceirt-1191/citadel/python-base-spark"
+export SPARK_WORKER_SERVICE_REPLICAS=3
 
 # Visualizer
 export VISUALIZER_IMAGE="manomarks/visualizer"
-export VISUALIZER_PORT="8080"
+export VISUALIZER_PORT="80"
 
 # Highlighting message
 loghighlight () {
+    echo ""
 	RESTORE='\033[0m'
 	LGREEN='\033[01;32m'
 	echo -e "${LGREEN}$@${RESTORE}"
@@ -157,12 +152,12 @@ dm () {
 # Function to wait for a service to be ready
 # Usage : wait_service <label_key:label_value> <desired_replicas>
 wait_service () {
-    SERVICE_LABEL=$1
-    SERVICE_REPLICAS=${2:-"1"}
-    while [[ ! $(docker service ls -f label=${SERVICE_LABEL} | grep -v REPLICAS | grep "${SERVICE_REPLICAS}/${SERVICE_REPLICAS}") ]]; do
-            echo "waiting for ${SERVICE_REPLICAS} replicas of service labelled '${SERVICE_LABEL}' to be ready..."
-            sleep 10
-    done
-    echo "Service is ready !"
-    echo ""
+	SERVICE_LABEL=$1
+	SERVICE_REPLICAS=${2:-"1"}
+	while [[ ! $(docker service ls -f label=${SERVICE_LABEL} | grep -v REPLICAS | grep "${SERVICE_REPLICAS}/${SERVICE_REPLICAS}") ]]; do
+        	echo "waiting for ${SERVICE_REPLICAS} replicas of service labelled '${SERVICE_LABEL}' to be ready..."
+	        sleep 10
+	done
+	echo "Service is ready !"
+	echo ""
 }

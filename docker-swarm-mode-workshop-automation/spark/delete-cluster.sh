@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load cluster configuration
-source env_cluster.sh google
+source spark_env.sh google
 
 NODES_LIST=("${MANAGERS_LIST[@]}" "${WORKERS_LIST[@]}")
 
