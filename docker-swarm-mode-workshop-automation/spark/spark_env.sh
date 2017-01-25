@@ -35,8 +35,17 @@ case "$1" in
   "google")
     echo "Driver = GOOGLE"
     MACHINE_DRIVER="google"
-    # Get current project ID programmatically if we launch this script on a GCE host
-    PROJECT_ID=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
+    
+    if [[ -z ${PROJECT_ID} || "${PROJECT_ID}" == "" ]]
+    then
+        # Get current project ID programmatically if we launch this script on a GCE host
+        PROJECT_ID=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
+        if [[ -z ${PROJECT_ID} || "${PROJECT_ID}" == "" ]]
+        then
+            echo "Please set PROJECT_ID variable to <your_google_project_id>."
+            return
+        fi
+    fi
     
     # URL of the Docker Engine version to be installed on the Docker Machines
     # If not specified, the package version is taken
@@ -50,7 +59,7 @@ case "$1" in
     export WORKER_DRIVER_OPTS="$MANAGER_DRIVER_OPTS"
 
     # --google-project ${PROJECT_ID}
-    export GOOGLE_PROJECT=${PROJECT_ID:-"oceirt-1191"}
+    export GOOGLE_PROJECT=${PROJECT_ID:-}
 
     # --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-1604-xenial-v20161205
     export GOOGLE_MACHINE_IMAGE="https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-1604-xenial-v20161205"
