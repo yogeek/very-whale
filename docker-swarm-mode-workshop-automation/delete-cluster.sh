@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Load cluster configuration
-source env_cluster.sh google
-
 NODES_LIST=("${MANAGERS_LIST[@]}" "${WORKERS_LIST[@]}")
 
 # Deleting machines
@@ -11,3 +8,4 @@ for node in ${NODES_LIST[@]}; do
 done
 
 echo "Cluster deleted !"
+dm use -u

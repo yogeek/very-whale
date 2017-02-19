@@ -5,8 +5,7 @@ version: '3'
 services:
 
   wordpressdb:
-    #image: 192.168.99.100:5000/mysql:latest
-    image: mysql:latest
+    image: 192.168.99.100:5000/mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: wordpress
       MYSQL_DATABASE: wordpress
@@ -21,8 +20,7 @@ services:
     depends_on:
       - wordpressdb
     #     condition: service_healthy
-    #image: 192.168.99.100:5000/wordpress:latest
-    image: wordpress:latest
+    image: 192.168.99.100:5000/wordpress:latest
     ports:
       - "80:80"
     environment:
@@ -40,21 +38,20 @@ services:
         condition: on-failure
       labels: [side=frontend]
 
-  viz:
-    depends_on:
-      - wordpress
-    #image: 192.168.99.100:5000/manomarks/visualizer
-    image: manomarks/visualizer
-    ports:
-      - "8080:8080"
-    networks:
-     - wordpressnet
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-      labels: [kind=viz]
+  # viz:
+  #   depends_on:
+  #     - wordpress
+  #   image: 192.168.99.100:5000/manomarks/visualizer
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #    - wordpressnet
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   deploy:
+  #     placement:
+  #       constraints: [node.role == manager]
+  #     labels: [kind=viz]
 
 networks:
   wordpressnet:

@@ -23,7 +23,7 @@ Edit the `env_cluster.sh` file to configure the cluster.
 ### Create a cluster
 
 ```
-./cluster-create.sh
+source ./wordpress-on-swarm.sh -p virtualbox
 ```
 
 The wordpress app will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${WORDPRESS_SERVICE_PUBLISHED_PORT}
@@ -36,7 +36,7 @@ The swarm vizualiser will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${VISU
 
 * Scale the wordpress service to 10 replicas
 ```
-docker service update --replicas=10 wordpress
+docker service scale wordpress=10
 ```
 
 * Stop one of the containers of wordpress service and check that swarm-mode starts another replicas to maintain the descriptive state.
@@ -48,6 +48,6 @@ docker service update --replicas=10 wordpress
 ### Delete cluster
 
 ```
-./delete-cluster.sh
+source ./delete-cluster.sh
 ```
 

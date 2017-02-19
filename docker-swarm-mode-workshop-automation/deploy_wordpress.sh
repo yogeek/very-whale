@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Load cluster configuration
-source env_cluster.sh $1
+source env_cluster.sh "$@"
 
 # Connect to the main manager
 dm use ${FIRST_MANAGER}
@@ -19,6 +18,7 @@ docker service create --name ${MYSQL_SERVICE_NAME} \
         --env MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
         --network ${WORDPRESS_NETWORK_NAME} \
         --label side=backend \
+        --with-registry-auth \
         ${MYSQL_DOCKER_IMAGE}
 
 # Waiting for Master service to be running
@@ -33,6 +33,7 @@ docker service create --name ${WORDPRESS_SERVICE_NAME} \
         --replicas ${WORDPRESS_SERVICE_REPLICAS} \
         --publish ${WORDPRESS_SERVICE_PUBLISHED_PORT}:80 \
         --label side=frontend \
+        --with-registry-auth \
         ${WORDPRESS_DOCKER_IMAGE} 
 
 

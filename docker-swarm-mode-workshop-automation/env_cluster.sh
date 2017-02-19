@@ -2,29 +2,97 @@
 
 #set -u
 
+# Some useful functions
+. ./utils.sh
 
-if [[ $# -ne 1 ]]
-then
-    echo "Usage : env_cluster.sh <cloud_driver>"
-    echo "with :"
-    echo "  <cloud_driver>  = Docker Machine Driver to create instances"
-    echo "                    Choices : virtualbox, google"
+function usage()
+{
     echo ""
-    exit 1
-fi
+    echo "Usage : source env_cluster.sh -p <cloud_provider> -r <private_registry> "
+    echo ""
+    echo "Load environment config"
+    echo ""
+    echo "options :"
+    echo -e "  -h, --help\t\t Print usage"
+    echo -e "  -p, --provider string\t Docker Machine Driver to create instances ('virtualbox', 'google')"
+    echo -e "  -r, --registry string\t Optional private registry ('local', '<REGISTRY_IP>:<REGISTRY_PORT>') (default = DockerHub)"
+    echo ""
+}
+
+export LOCAL_REGISTRY_MACHINE="private-registry"
+export LOCAL_REGISTRY_PORT="5000"
+
+# Parse args
+if [[ $# -eq 0 ]]
+then 
+    usage 
+    return 1
+fi 
+
+while [[ $# -ge 1 ]]
+do
+    key="$1"
+
+    case $key in
+        -h|--help)
+            usage
+            return 0
+            ;;
+        -p|--provider)
+            PROVIDER="$2"
+            shift # past argument
+            ;;
+        -r|--registry)
+            export REGISTRY_ARG="$2"
+            shift # past argument
+            ;;
+        *) 
+            logerror "Unknown option !"
+            usage 
+            return 1 
+            ;; 
+    esac
+    shift # past argument or value
+done
 
 echo "Loading cluster configuration..."
 
+# If a private registry is specified
+if [[ ! -z $REGISTRY_ARG ]]  
+then 
+    # if 'local' is specified, start the local private resgistry
+    if [[ "$REGISTRY_ARG" == "local" ]]
+    then
+        # Start Private Registry 
+        loghighlight "Starting private registry docker machine..." 
+        docker-machine start private-registry 
+        # Check local private registry (stored in 'private-registry' docker machine) 
+        export REGISTRY="$(dm ip $LOCAL_REGISTRY_MACHINE):${LOCAL_REGISTRY_PORT}" 
+        if [[ $? -ne 0 ]] 
+        then 
+            loghighlight "Warning : you have to start 'private-registry' docker machine first !" 
+            loghighlight "To do that : 'docker-machine start private-registry'" 
+            return 0 
+        fi 
+        #REGISTRY_OPTS="--engine-insecure-registry ${REGISTRY}"
+    fi
+    export REGISTRY_PREFIX="${REGISTRY}/"
+fi
+
+echo "" 
+echo "Images will be pulled from : ${REGISTRY:-'Docker Hub'}"
+echo ""
+
 # Cluster simple inventory as list to automate machines creation
 # The first node of the managers list will be taken as the main manager for cluster initialisation 
-export MANAGERS_LIST=( m1 m2 m3 )
+export MANAGERS_LIST=( m1 )
 export FIRST_MANAGER=${MANAGERS_LIST[0]}
-export WORKERS_LIST=( w1 )
+export WORKERS_LIST=( w1 w2 w3)
 
 # Specific virtualization provider config
 # (see cloud providers documentation for details)
 
-case "$1" in
+case "$PROVIDER" in
   # VirtualBox machines
   "virtualbox")
     echo "Driver = VIRTUALBOX"
@@ -43,15 +111,18 @@ case "$1" in
         PROJECT_ID=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
         if [[ -z ${PROJECT_ID} || "${PROJECT_ID}" == "" ]]
         then
-            echo "Please set PROJECT_ID variable to <your_google_project_id>."
-            return
+            echo ""
+            loghighlight "You launch this script from a machine outside of your GCE project. "
+            loghighlight "Please set PROJECT_ID variable to <your_google_project_id>."
+            echo ""
+            return 0
         fi
     fi
 
     # URL of the Docker Engine version to be installed on the Docker Machines
     # If not specified, the package version is taken
     #export ENGINE_URL=""
-    # Test version (to use v1.13-rc2 needed for swarm mode service discovery through specific overlay network)
+    # Test version
     #export ENGINE_URL="--engine-install-url https://test.docker.com/"
     
     # Options for "docker-machine create" command for manager nodes
@@ -88,90 +159,39 @@ case "$1" in
     #                      ${SCOPE_PREFIX_URL}service.management"
     ;;
   *)
-    echo "Error ! Invalid argument."
-    echo "You must specify a machine driver among : virtualbox, google" 
-    return
+    logerror "Error ! Invalid argument."
+    usage
     ;;
 esac
 
 # Network config
-export WORDPRESS_NETWORK_NAME="sparknet"
+export WORDPRESS_NETWORK_NAME="wordpressnet"
 
 # worpress config
 export WORDPRESS_SERVICE_NAME="wordpress"
-export WORDPRESS_DOCKER_IMAGE="wordpress:latest"
+export WORDPRESS_DOCKER_IMAGE="${REGISTRY_PREFIX:-}wordpress:latest"
 export WORDPRESS_SERVICE_PUBLISHED_PORT="80"
 
 export WORDPRESS_SERVICE_REPLICAS=3
 
 # mysql config
 export MYSQL_SERVICE_NAME="wordpressdb"
-export MYSQL_DOCKER_IMAGE="mysql:latest"
+export MYSQL_DOCKER_IMAGE="${REGISTRY_PREFIX:-}mysql:latest"
 export MYSQL_DATABASE="wordpress"
 export MYSQL_ROOT_PASSWORD="password"
 
 # Visualizer
-export VISUALIZER_IMAGE="manomarks/visualizer"
+export VISUALIZER_IMAGE="${REGISTRY_PREFIX:-}manomarks/visualizer:latest"
 export VISUALIZER_PORT="8080"
 
-# Highlighting message
-loghighlight () {
-	RESTORE='\033[0m'
-	LGREEN='\033[01;32m'
-	echo -e "${LGREEN}$@${RESTORE}"
-}
+export ENV_OK="true"
 
-echo "Loading docker-machine wrapper..."
-
-# Use the docker-machine wrapper function from docker-machine wrapper script
-# (https://docs.docker.com/machine/install-machine/#/installing-bash-completion-scripts)
-__docker_machine_wrapper () {
-    if [[ "$1" == use ]]; then
-        # Special use wrapper
-        shift 1
-        case "$1" in
-            -h|--help|"")
-                cat <<EOF
-Usage: docker-machine use [OPTIONS] [arg...]
-
-Evaluate the commands to set up the environment for the Docker client
-
-Description:
-   Argument is a machine name.
-
-Options:
-
-   --swarm	Display the Swarm config instead of the Docker daemon
-   --unset, -u	Unset variables instead of setting them
-
-EOF
-                ;;
-            *)
-                eval "$(docker-machine env "$@")"
-                echo "Active machine: ${DOCKER_MACHINE_NAME}"
-                . ~/.bashrc
-                ;;
-        esac
-    else
-        # Just call the actual docker-machine app
-        command docker-machine "$@"
-    fi
-}
-
-# Shortcut for docker-machine wrapper command
-dm () {
-	__docker_machine_wrapper "$@" 
-}
-
-# Function to wait for a service to be ready
-# Usage : wait_service <label_key:label_value> <desired_replicas>
-wait_service () {
-    SERVICE_LABEL=$1
-    SERVICE_REPLICAS=${2:-"1"}
-    while [[ ! $(docker service ls -f label=${SERVICE_LABEL} | grep -v REPLICAS | grep "${SERVICE_REPLICAS}/${SERVICE_REPLICAS}") ]]; do
-            echo "waiting for ${SERVICE_REPLICAS} replicas of service labelled '${SERVICE_LABEL}' to be ready..."
-            sleep 10
-    done
-    echo "Service is ready !"
+trace () {
     echo ""
+    echo "-----------------------------------------------------"
+    echo "PROVIDER = $PROVIDER"
+    echo "WORDPRESS_DOCKER_IMAGE = $WORDPRESS_DOCKER_IMAGE"
+    echo "MYSQL_DOCKER_IMAGE = $MYSQL_DOCKER_IMAGE"
+    echo "VISUALIZER_IMAGE =$VISUALIZER_IMAGE"
+    echo "-----------------------------------------------------"
 }

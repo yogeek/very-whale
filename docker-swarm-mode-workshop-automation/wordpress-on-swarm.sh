@@ -13,26 +13,15 @@
 #
 ##############################################################################################
 
+source env_cluster.sh $@
 
-if [[ $# -ne 1 ]]
-then
-    echo "Usage : wordpress-on-swarm.sh <cloud_driver>"
-    echo "with :"
-    echo "	<cloud_driver> 	= Docker Machine Driver to create instances"
-    echo "					  Choices : virtualbox, google"
-    echo ""
-    exit 1
-fi
+source create_machines.sh $@
 
-source env_cluster.sh $1
-
-source create_machines.sh $1
-
-source init_swarm.sh $1
+source init_swarm.sh $@
 
 #source pull_images.sh $1
 
-source deploy_wordpress.sh $1
+source start_viz.sh $@
 
-source start_viz.sh $1
+source deploy_wordpress.sh $@
 

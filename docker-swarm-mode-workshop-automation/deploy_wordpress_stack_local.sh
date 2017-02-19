@@ -2,17 +2,17 @@
 
 source env_cluster.sh "$@"
 
-loghighlight "====================== STACK CLEANING ======================"
+loghighlight "====================== STACK DEPLOY ======================"
 
 # Connect to the first manager
-echo "Cleaning the stack..."
+echo "Deploying the stack..."
 dm use ${FIRST_MANAGER}
-docker stack rm wordpress_stack
+docker stack deploy -c docker-compose-local.yaml --with-registry-auth  wordpress_stack
 
 # Display the nodes
 loghighlight "---------- Stack list :"
 docker stack ls
 
-loghighlight "Stack removed ! "
+loghighlight "Stack deployed on swarm cluster ! "
 
 loghighlight "========================================================"

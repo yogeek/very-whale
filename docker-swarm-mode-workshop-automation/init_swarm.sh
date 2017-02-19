@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Load cluster configuration
-source env_cluster.sh $1
+source env_cluster.sh "$@"
 
 loghighlight "====================== SWARM INIT ======================"
 
 # Connect to the manager 1
-echo "Initializing the swarm..."
+loghighlight "Initializing the swarm..."
 dm use ${FIRST_MANAGER}
 # Init the swarm on the manager with its own IP (it manages itself for the moment)
 docker swarm init --advertise-addr $(dm ip ${FIRST_MANAGER})

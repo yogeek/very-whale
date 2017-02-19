@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Load cluster configuration
-source env_cluster.sh $1
+source env_cluster.sh "$@"
 
 loghighlight "====================== SWARM CLEAN ======================"
 

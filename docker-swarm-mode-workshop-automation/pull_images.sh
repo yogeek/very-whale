@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Load cluster configuration
-source env_cluster.sh $1
+# Some useful functions
+. ./utils.sh
+
+source env_cluster.sh "$@"
 
 loghighlight "====================== PULLING IMAGES ======================"
 
