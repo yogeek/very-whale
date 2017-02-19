@@ -22,7 +22,7 @@ Before you start, make sure you have :
 
 Edit the `env_cluster.sh` file to configure the cluster.
      
-### Create a cluster
+### Create a cluster and deploy all services in one command
 
 ```
 source ./wordpress-on-swarm.sh -p virtualbox
@@ -34,11 +34,23 @@ The swarm vizualiser will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${VISU
 
 ![swarm-viz](resources/docker-swarm-mode-viz.png)
 
+### Clean all swarm services
+
+```
+source ./clean_swarm_services.sh
+```
+
 ### Deploy a stack
 
 You can also use the latest Docker 1.13 stack deployment with Docker Compose 1.11+ :
 ```
-	docker stack deploy -c docker-compose.yaml wordpress_stack
+docker stack deploy -c docker-compose.yaml wordpress_stack
+```
+
+### Clean stack
+
+```
+source ./clean_wordpress_stack.sh
 ```
 
 ### Play with the cluster
