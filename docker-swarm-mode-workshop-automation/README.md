@@ -2,17 +2,19 @@
 
 ## Description
 
-Simple scripts using docker-machine and swarm-mode of Docker 1.12 to automate the creation of a swarm cluster
+Simple scripts using docker-machine and Docker swarm-mode to automate the creation of a swarm cluster
 and the deployment of a wordpress stack on it.
 The wordpress stack is composed of a wordpress service (with N replicas) and a mysql service (with only one replica).
 A [Docker Swarm Visualizer](https://github.com/ManoMarks/docker-swarm-visualizer) service is also deployed to have a graphical view of the cluster. 
+
+__Update__ : now available the new "docker stack deploy" feature !
 
 ## Prerequisites
 
 Before you start, make sure you have :
 
-* [Docker 1.12+](https://docs.docker.com/engine/installation/) installed,
-* [Docker Machine 0.8.2+](https://docs.docker.com/machine/install-machine/) installed
+* [Docker 1.13+](https://docs.docker.com/engine/installation/) installed,
+* [Docker Machine 1.11+](https://docs.docker.com/machine/install-machine/) installed
 
  ## How to use
 
@@ -31,6 +33,13 @@ The wordpress app will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${WORDPRE
 The swarm vizualiser will be accessible at : http://\<ANY_SWARM_NODE_IP\>:${VISUALIZER_PORT} and will display a dynamic view of the swarm :
 
 ![swarm-viz](resources/docker-swarm-mode-viz.png)
+
+### Deploy a stack
+
+You can also use the latest Docker 1.13 stack deployment with Docker Compose 1.11+ :
+```
+	docker stack deploy -c docker-compose.yaml wordpress_stack
+```
 
 ### Play with the cluster
 
