@@ -10,9 +10,9 @@ function copy_registry_crt() {
 	dm scp private-registry:/home/docker/certs/* ./registry_certs/
 	# Copy them to current machine
 	dm scp -r registry_certs/domain.crt $1:~docker/
-	dm ssh $1 sudo mkdir -p /etc/docker/certs.d/192.168.99.100\:5000/
-	dm ssh $1 sudo cp ~docker/domain.crt /etc/docker/certs.d/192.168.99.100\:5000/ca.crt
-	dm ssh $1 sudo cp ~docker/domain.crt /usr/local/share/ca-certificates/192.168.99.100.crt
+	dm ssh $1 'sudo mkdir -p /etc/docker/certs.d/192.168.99.100\:5000/'
+	dm ssh $1 'sudo cp ~docker/domain.crt /etc/docker/certs.d/192.168.99.100\:5000/ca.crt'
+	dm ssh $1 'sudo cp ~docker/domain.crt /usr/local/share/ca-certificates/192.168.99.100.crt'
 }
 
 loghighlight "==================== MACHINES CREATION ====================="
