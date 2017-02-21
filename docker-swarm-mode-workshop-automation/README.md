@@ -14,7 +14,7 @@ __Update__ : now available the new "docker stack deploy" feature !
 Before you start, make sure you have :
 
 * [Docker 1.13+](https://docs.docker.com/engine/installation/) installed,
-* [Docker Machine 1.11+](https://docs.docker.com/machine/install-machine/) installed
+* [Docker Machine 0.9+](https://docs.docker.com/machine/install-machine/) installed with [bash completion script](https://github.com/docker/machine/tree/master/contrib/completion/bash)
 
  ## How to use
 
