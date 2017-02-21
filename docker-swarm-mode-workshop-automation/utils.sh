@@ -42,6 +42,11 @@ function check_env {
 	fi
 }
 
+# Shortcut for docker-machine command
+function dm () {
+        docker-machine "$@"
+}
+
 # echo "Loading docker-machine wrapper..."
 
 # # Use the docker-machine wrapper function from docker-machine wrapper script
