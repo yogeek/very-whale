@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Some useful functions
-. ./utils.sh
-
 source env_cluster.sh "$@"
 
 loghighlight "====================== PULLING IMAGES ======================"

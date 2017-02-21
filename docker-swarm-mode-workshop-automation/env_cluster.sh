@@ -58,7 +58,7 @@ done
 echo "Loading cluster configuration..."
 
 # If a private registry is specified
-if [[ ! -z $REGISTRY_ARG ]]  
+if [[ ! -z $REGISTRY_ARG && "$ENV_OK" != "true" ]]  
 then 
     # if 'local' is specified, start the local private resgistry
     if [[ "$REGISTRY_ARG" == "local" ]]
@@ -75,6 +75,7 @@ then
             return 0 
         fi 
         #REGISTRY_OPTS="--engine-insecure-registry ${REGISTRY}"
+        source ./config_registry_machine.sh
     fi
     export REGISTRY_PREFIX="${REGISTRY}/"
 fi
@@ -87,7 +88,7 @@ echo ""
 # The first node of the managers list will be taken as the main manager for cluster initialisation 
 export MANAGERS_LIST=( m1 )
 export FIRST_MANAGER=${MANAGERS_LIST[0]}
-export WORKERS_LIST=( w1 w2 w3)
+export WORKERS_LIST=( w1 w2 w3 )
 
 # Specific virtualization provider config
 # (see cloud providers documentation for details)

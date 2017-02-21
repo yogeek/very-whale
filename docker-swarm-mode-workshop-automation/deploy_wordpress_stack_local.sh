@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source env_cluster.sh "$@"
-
 loghighlight "====================== STACK DEPLOY ======================"
 
 # Connect to the first manager

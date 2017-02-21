@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source env_cluster.sh "$@"
+#$FIRST_MANAGER=$(docker node ls -f "role=manager" | grep -v ID | awk '{print $3;}')
 
 loghighlight "====================== STACK CLEANING ======================"
 
