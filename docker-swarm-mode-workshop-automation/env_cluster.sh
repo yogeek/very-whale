@@ -98,7 +98,7 @@ case "$PROVIDER" in
   "virtualbox")
     echo "Driver = VIRTUALBOX"
     MACHINE_DRIVER="virtualbox"
-    export MANAGER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
+    export MANAGER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=2048"
     export WORKER_DRIVER_OPTS="-d virtualbox --virtualbox-memory=512"
     ;;
   # GCE machines
@@ -135,6 +135,8 @@ case "$PROVIDER" in
     export GOOGLE_PROJECT=${PROJECT_ID:-}
 
     # --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-1604-xenial-v20161205
+    #TODO : compare launch from outside GCE and from a GCE VM 
+    #TODO : check FAMILY image to be sure to have the latest ubuntu image
     export GOOGLE_MACHINE_IMAGE="https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-1604-xenial-v20161205"
     
     # --google-zone europe-west1-c

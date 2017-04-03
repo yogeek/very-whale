@@ -42,50 +42,43 @@ function check_env {
 	fi
 }
 
-# Shortcut for docker-machine command
-function dm () {
-        docker-machine "$@"
+# Use the docker-machine wrapper function from docker-machine wrapper script
+# (https://docs.docker.com/machine/install-machine/#/installing-bash-completion-scripts)
+__docker_machine_wrapper () {
+    if [[ "$1" == use ]]; then
+        # Special use wrapper
+        shift 1
+        case "$1" in
+            -h|--help|"")
+                cat <<EOF
+Usage: docker-machine use [OPTIONS] [arg...]
+
+Evaluate the commands to set up the environment for the Docker client
+
+Description:
+   Argument is a machine name.
+
+Options:
+
+   --swarm	Display the Swarm config instead of the Docker daemon
+   --unset, -u	Unset variables instead of setting them
+
+EOF
+                ;;
+            *)
+                eval "$(docker-machine env "$@")"
+                echo "Active machine: ${DOCKER_MACHINE_NAME}"
+                # . ~/.bashrc
+                ;;
+        esac
+    else
+        # Just call the actual docker-machine app
+        command docker-machine "$@"
+    fi
 }
 
-# echo "Loading docker-machine wrapper..."
-
-# # Use the docker-machine wrapper function from docker-machine wrapper script
-# # (https://docs.docker.com/machine/install-machine/#/installing-bash-completion-scripts)
-# __docker_machine_wrapper () {
-#     if [[ "$1" == use ]]; then
-#         # Special use wrapper
-#         shift 1
-#         case "$1" in
-#             -h|--help|"")
-#                 cat <<EOF
-# Usage: docker-machine use [OPTIONS] [arg...]
-
-# Evaluate the commands to set up the environment for the Docker client
-
-# Description:
-#    Argument is a machine name.
-
-# Options:
-
-#    --swarm	Display the Swarm config instead of the Docker daemon
-#    --unset, -u	Unset variables instead of setting them
-
-# EOF
-#                 ;;
-#             *)
-#                 eval "$(docker-machine env "$@")"
-#                 echo "Active machine: ${DOCKER_MACHINE_NAME}"
-#                 . ~/.bashrc
-#                 ;;
-#         esac
-#     else
-#         # Just call the actual docker-machine app
-#         command docker-machine "$@"
-#     fi
-# }
-
-# # Shortcut for docker-machine wrapper command
-# function dm () {
-# 	__docker_machine_wrapper "$@" 
-# }
+# Shortcut for docker-machine wrapper command
+function dm () {
+	__docker_machine_wrapper "$@" 
+}
 

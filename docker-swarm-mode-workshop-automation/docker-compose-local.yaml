@@ -19,7 +19,6 @@ services:
   wordpress:
     depends_on:
       - wordpressdb
-    #     condition: service_healthy
     image: 192.168.99.100:5000/wordpress:latest
     ports:
       - "80:80"
@@ -30,10 +29,10 @@ services:
      - wordpressnet
     deploy:
       mode: replicated
-      replicas: 6
-      #update_config:
-      #parallelism: 2
-      #  delay: 10s
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
       restart_policy:
         condition: on-failure
       labels: [side=frontend]

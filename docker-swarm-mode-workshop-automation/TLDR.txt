@@ -1,0 +1,47 @@
+#----
+TL;DR
+#----
+
+# Machines
+
+docker-machine create -d virtualbox m1
+docker-machine create -d virtualbox w1
+docker-machine create -d virtualbox w2
+docker-machine create -d virtualbox w3
+
+MANAGER_IP=$(docker-machine ip m1)
+
+# Master : Swarm init
+eval $(docker-machine env m1)
+docker swarm init --advertise-addr $MANAGER_IP
+
+TOKEN_WORKER=$(docker swarm join-token worker -q)
+
+
+# Workers : Join
+docker swarm join \
+	--token $TOKEN_WORKER \
+	$MANAGER_IP:2377
+
+# Nodes list
+docker node ls
+
+# Swarm Visualizer
+VISUALIZER_IMAGE="manomarks/visualizer:latest"
+docker run -it -d \
+	--name swarm_visualizer \
+	-p 8080:8080 \
+	-e HOST=localhost   \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	${VISUALIZER_IMAGE}
+
+# Load Balancer
+docker service create --name lbapp --replicas 1 -p 81:80 katacoda/docker-http-server
+# Scale
+docker service scale lbapp=3
+
+# Drain a node
+docker service ps lbapp
+docker node update --availability drain w1
+# Inspect service migration
+docker service ps lbapp 
