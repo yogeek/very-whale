@@ -1,4 +1,4 @@
-# Automation of Docker 1.12 Swarm-Mode workshop :whale:
+# Automation of Docker Swarm-Mode workshop :whale:
 
 ## Description
 
