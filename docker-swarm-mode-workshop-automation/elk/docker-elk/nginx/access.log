@@ -1,0 +1,5 @@
+172.17.0.1 - - [02/Mar/2017:23:35:12 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0" "-"
+172.17.0.1 - - [02/Mar/2017:23:38:18 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0" "-"
+172.17.0.1 - - [02/Mar/2017:23:38:18 +0000] "GET /favicon.ico HTTP/1.1" 404 170 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0" "-"
+172.17.0.1 - - [02/Mar/2017:23:38:18 +0000] "GET /favicon.ico HTTP/1.1" 404 170 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0" "-"
+172.17.0.1 - - [02/Mar/2017:23:38:29 +0000] "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0" "-"
